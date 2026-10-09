@@ -1,4 +1,3 @@
-```javascript
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 (() => {
@@ -76,7 +75,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
   // --------------------------------------------------
   // 4. TIMEOUT HELPER
-  // Prevents the UI from waiting forever.
   // --------------------------------------------------
 
   function withTimeout(
@@ -413,7 +411,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
       formData.get("notes") || ""
     ).trim();
 
-    // Save customer first.
     const customerRecord = {
       business_id: currentBusinessId,
       full_name: customerName,
@@ -563,8 +560,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
   // --------------------------------------------------
   // 13. AUTH STATE CHANGES
-  // Do not run a second membership check on SIGNED_IN.
-  // The login form handles that check.
   // --------------------------------------------------
 
   supabase.auth.onAuthStateChange(
@@ -578,4 +573,3 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
   // Start the application.
   initialize();
 })();
-```
