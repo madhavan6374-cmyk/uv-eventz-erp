@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101a2a">
+  <title>UV Eventz | Event Management ERP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Josefin+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="auth-locked">
+  <section class="auth-screen" id="authScreen" aria-labelledby="authTitle">
+    <div class="auth-card">
+      <img class="auth-logo" src="https://iili.io/nG0wCas.md.jpg" alt="UV Eventz logo">
+      <p class="eyebrow">PRIVATE WORKSPACE</p>
+      <h1 id="authTitle">Welcome back</h1>
+      <p class="auth-copy">Sign in to access your UV Eventz workspace.</p>
+      <form id="loginForm" class="auth-form">
+        <label>Email address<input name="email" type="email" autocomplete="username" required placeholder="you@example.com"></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required placeholder="Your account password"></label>
+        <button class="button button-primary auth-submit" type="submit">Sign in securely</button>
+        <p id="authMessage" class="auth-message" role="status"></p>
+      </form>
+      <small class="auth-foot">Secure sign-in powered by Supabase</small>
+    </div>
+  </section>
+  <div class="app-shell">
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="UV Eventz home"><img class="brand-logo" src="https://iili.io/nG0wCas.md.jpg" alt="UV Eventz — Made for Memories" loading="eager"></a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="Dashboard"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</button>
+        <button class="nav-item" data-view="Enquiries"><span class="nav-icon"><i data-lucide="inbox"></i></span>Enquiries <span class="nav-count">4</span></button>
+        <button class="nav-item" data-view="Customers"><span class="nav-icon"><i data-lucide="users"></i></span>Customers</button>
+        <button class="nav-item" data-view="Quotations"><span class="nav-icon"><i data-lucide="file-text"></i></span>Quotations</button>
+        <button class="nav-item" data-view="Events"><span class="nav-icon"><i data-lucide="calendar-days"></i></span>Events</button>
+        <button class="nav-item" data-view="Invoices"><span class="nav-icon"><i data-lucide="receipt-text"></i></span>Invoices</button>
+        <button class="nav-item" data-view="Finance"><span class="nav-icon"><i data-lucide="wallet"></i></span>Income & Expenses</button>
+        <button class="nav-item" data-view="Reports"><span class="nav-icon"><i data-lucide="chart-no-axes-combined"></i></span>Reports</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="workspace-label">PREFERENCES</div>
+        <button class="nav-item" data-view="Integrations"><span class="nav-icon"><i data-lucide="workflow"></i></span>Integrations</button>
+        <button class="nav-item" data-view="Settings"><span class="nav-icon"><i data-lucide="settings-2"></i></span>Settings</button>
+        <div class="plan-card"><span class="plan-dot"></span><div><strong>Workspace ready</strong><small>Prototype · Sample data</small></div></div>
+        <div class="user-profile"><div class="avatar" id="userAvatar">UV</div><div><strong id="signedInName">UV Eventz</strong><small id="signedInRole">Workspace member</small></div><button class="profile-more" id="logoutButton" type="button" title="Sign out" aria-label="Sign out">↪</button></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation"><i data-lucide="menu"></i></button>
+        <div class="breadcrumb"><span>Workspace</span><b>/</b><strong id="pageName">Dashboard</strong></div>
+        <div class="top-actions">
+          <span class="date-chip" id="todayLabel">Today</span>
+          <button class="icon-button" id="helpButton" aria-label="Help"><i data-lucide="circle-help"></i></button>
+          <div class="avatar avatar-small">UV</div>
+        </div>
+      </header>
+
+      <section class="page-content">
+        <div class="welcome-row">
+          <div><p class="eyebrow">FRIDAY, 09 OCTOBER 2026</p><h1 id="pageTitle">Good morning, UV Eventz <span>✦</span></h1><p class="subheading" id="pageSubtitle">Here’s what’s happening across your events today.</p></div>
+          <div class="welcome-actions"><button class="button button-secondary" id="exportButton"><i data-lucide="download"></i> Export summary</button><button class="button button-primary" id="newEnquiryButton"><i data-lucide="plus"></i> New enquiry</button></div>
+        </div>
+
+        <div class="notice" id="prototypeNotice"><span class="notice-icon"><i data-lucide="info"></i></span><div><strong>First connected milestone</strong><p>Sign-in and enquiry saving are connected. Dashboard summary cards remain sample figures until their live reports are built.</p></div><button id="dismissNotice" aria-label="Dismiss notice">×</button></div>
+
+        <div class="section-heading"><div><h2>Business overview</h2><p>Key numbers at a glance</p></div><button class="select-button" id="periodButton">This month <span>⌄</span></button></div>
+        <div class="metrics-grid">
+          <article class="metric-card"><div class="metric-top"><span>Total enquiries</span><span class="metric-icon gold"><i data-lucide="contact-round"></i></span></div><div class="metric-value">28</div><div class="metric-foot"><span class="trend positive">↗ 12.5%</span><span>vs last month</span></div><div class="mini-bars"><i style="height:35%"></i><i style="height:50%"></i><i style="height:43%"></i><i style="height:66%"></i><i style="height:55%"></i><i style="height:80%"></i><i style="height:72%"></i><i style="height:100%"></i></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Confirmed events</span><span class="metric-icon green"><i data-lucide="calendar-check"></i></span></div><div class="metric-value">12</div><div class="metric-foot"><span class="trend positive">↗ 8.3%</span><span>vs last month</span></div><div class="metric-note"><span class="status-dot green-dot"></span> 3 events this week</div></article>
+          <article class="metric-card"><div class="metric-top"><span>Payments received</span><span class="metric-icon blue"><i data-lucide="indian-rupee"></i></span></div><div class="metric-value">₹4.82L</div><div class="metric-foot"><span class="trend positive">↗ 6.4%</span><span>vs last month</span></div><div class="progress-track"><span style="width:68%"></span></div><div class="progress-label"><span>68% of target</span><span>₹7.00L</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Outstanding</span><span class="metric-icon rose"><i data-lucide="clock-alert"></i></span></div><div class="metric-value">₹1.36L</div><div class="metric-foot"><span class="trend negative">3 overdue</span><span>invoices to follow up</span></div><button class="text-link" data-view-link="Invoices">Review outstanding →</button></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel upcoming-panel">
+            <div class="panel-header"><div><h2>Upcoming events</h2><p>Your next scheduled celebrations</p></div><button class="text-link" data-view-link="Events">View calendar →</button></div>
+            <div class="event-list">
+              <article class="event-row"><div class="event-date"><strong>12</strong><span>OCT</span></div><div class="event-main"><strong>Arun & Priya — Wedding</strong><span>Grand wedding · Chennai</span><small>09:00 AM – 10:00 PM</small></div><span class="pill pill-confirmed">Confirmed</span><button class="row-more" aria-label="More options">•••</button></article>
+              <article class="event-row"><div class="event-date"><strong>15</strong><span>OCT</span></div><div class="event-main"><strong>Meena — 60th Birthday</strong><span>Family celebration · Avadi</span><small>06:00 PM – 10:00 PM</small></div><span class="pill pill-progress">In planning</span><button class="row-more" aria-label="More options">•••</button></article>
+              <article class="event-row"><div class="event-date"><strong>18</strong><span>OCT</span></div><div class="event-main"><strong>Karthik & Divya — Engagement</strong><span>Engagement · Porur</span><small>10:00 AM – 02:00 PM</small></div><span class="pill pill-confirmed">Confirmed</span><button class="row-more" aria-label="More options">•••</button></article>
+              <article class="event-row"><div class="event-date"><strong>24</strong><span>OCT</span></div><div class="event-main"><strong>Ramesh Family — Reception</strong><span>Wedding reception · Ambattur</span><small>06:30 PM – 11:00 PM</small></div><span class="pill pill-pending">Awaiting advance</span><button class="row-more" aria-label="More options">•••</button></article>
+            </div>
+          </section>
+
+          <section class="panel followup-panel">
+            <div class="panel-header"><div><h2>Follow-ups</h2><p>Keep enquiries moving</p></div><span class="counter-badge">4 due</span></div>
+            <div class="followup-list">
+              <article class="followup-row"><div class="follow-avatar avatar-peach">SP</div><div class="follow-info"><strong>Suresh & Preethi</strong><span>Wedding · ₹2.5L budget</span><small>Quotation follow-up</small></div><span class="due-tag due-today">Today</span></article>
+              <article class="followup-row"><div class="follow-avatar avatar-lilac">RK</div><div class="follow-info"><strong>R. Kumar</strong><span>Housewarming · ₹45K</span><small>Call to confirm date</small></div><span class="due-tag due-today">Today</span></article>
+              <article class="followup-row"><div class="follow-avatar avatar-mint">AD</div><div class="follow-info"><strong>Anand & Deepa</strong><span>Engagement · ₹80K</span><small>Send revised quotation</small></div><span class="due-tag due-later">Tomorrow</span></article>
+              <article class="followup-row"><div class="follow-avatar avatar-blue">VS</div><div class="follow-info"><strong>Vijayalakshmi</strong><span>60th birthday · ₹65K</span><small>Venue details pending</small></div><span class="due-tag due-later">11 Oct</span></article>
+            </div>
+            <button class="button button-secondary button-full" data-view-link="Enquiries">Open enquiry pipeline</button>
+          </section>
+        </div>
+
+        <div class="bottom-grid">
+          <section class="panel pipeline-panel">
+            <div class="panel-header"><div><h2>Enquiry pipeline</h2><p>Track every opportunity</p></div><button class="text-link" data-view-link="Enquiries">View all →</button></div>
+            <div class="pipeline-stages">
+              <div><span class="stage-count">08</span><span class="stage-name">New</span><span class="stage-bar"><i style="width:78%"></i></span></div>
+              <div><span class="stage-count">06</span><span class="stage-name">Contacted</span><span class="stage-bar"><i style="width:58%"></i></span></div>
+              <div><span class="stage-count">05</span><span class="stage-name">Quotation sent</span><span class="stage-bar"><i style="width:48%"></i></span></div>
+              <div><span class="stage-count">03</span><span class="stage-name">Negotiation</span><span class="stage-bar"><i style="width:30%"></i></span></div>
+              <div><span class="stage-count">06</span><span class="stage-name">Confirmed</span><span class="stage-bar"><i style="width:60%"></i></span></div>
+            </div>
+          </section>
+          <section class="panel finance-panel">
+            <div class="panel-header"><div><h2>Financial snapshot</h2><p>October 2026 · illustrative data</p></div><button class="text-link" data-view-link="Finance">View accounts →</button></div>
+            <div class="finance-numbers"><div><span>Income received</span><strong>₹4,82,000</strong></div><div><span>Recorded expenses</span><strong>₹2,14,500</strong></div></div>
+            <div class="finance-bar"><span style="width:69%"></span><i style="left:69%"></i></div>
+            <div class="finance-legend"><span><i class="legend-income"></i> Income</span><span><i class="legend-expense"></i> Expenses</span></div>
+            <div class="profit-row"><span>Difference before other adjustments</span><strong>₹2,67,500</strong></div>
+          </section>
+        </div>
+        <footer class="footer"><span>© 2026 UV Eventz · Internal business workspace</span><span>Prototype v0.1 <i></i> Cloud database not connected</span></footer>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="modal" id="enquiryModal">
+    <form method="dialog" id="enquiryForm">
+      <div class="modal-header"><div><p class="eyebrow">CUSTOMER MANAGEMENT</p><h2>Create new enquiry</h2></div><button class="close-button" aria-label="Close">×</button></div>
+      <p class="modal-intro">Save this enquiry to the UV Eventz cloud workspace.</p>
+      <div class="form-grid">
+        <label>Customer name <input name="customer" required placeholder="e.g. Priya Kumar"></label>
+        <label>Mobile number <input name="phone" required inputmode="tel" placeholder="+91"></label>
+        <label>Event type <select name="eventType"><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Housewarming</option><option>Anniversary</option><option>Other family function</option></select></label>
+        <label>Expected event date <input name="eventDate" type="date"></label>
+        <label>Estimated budget (₹) <input name="budget" type="number" min="0" placeholder="50000"></label>
+        <label>Lead source <select name="source"><option>WhatsApp</option><option>Phone call</option><option>Instagram</option><option>Referral</option><option>Gmail</option><option>Other</option></select></label>
+        <label class="full-field">Venue / location <input name="venue" placeholder="City, venue or area"></label>
+        <label class="full-field">Requirements / notes <textarea name="notes" rows="3" placeholder="Guest count, services needed, preferences..."></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button-secondary" id="cancelEnquiry">Cancel</button><button type="submit" class="button button-primary" id="saveEnquiryButton">Save enquiry</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/app.js"></script>
+  <script type="module" src="js/supabase-auth.js"></script>
+</body>
+</html>
