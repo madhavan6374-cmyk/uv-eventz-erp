@@ -74,3 +74,7 @@ The interface now follows the supplied UV Eventz logo: Obsidian Black `#080808`,
 
 ## v0.6 connection note
 Project URL is configured as `https://ikibojgryldcxijtpqwm.supabase.co` (do not include `/rest/v1/` when using the Supabase JavaScript client). The publishable key is configured in the client script. Do not add secrets to this project.
+
+
+## v0.7 fixed-path update (flat GitHub repository)
+This package is deliberately flat to match a GitHub repository where `index.html`, `styles.css`, `app.js`, `supabase-auth.js`, and `schema.sql` are all in the repository root. The HTML references the root CSS and JavaScript files. Upload/replace these files at the repository root; do not upload the ZIP itself. Do not run `schema.sql` again against an already-configured database.
