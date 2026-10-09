@@ -1,102 +1,267 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = "https://ikibojgryldcxijtpqwm.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6bICs6L1GQE-tuVt5E2rMA_ltvRdNOP";
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-window.uvSupabase = supabase;
+(() => {
+  "use strict";
 
-const $ = (selector) => document.querySelector(selector);
-const authScreen = $("#authScreen");
-const authForm = $("#loginForm");
-const authMessage = $("#authMessage");
-const shell = document.querySelector(".app-shell");
-let activeBusinessId = null;
-let activeUser = null;
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) =>
+    [...root.querySelectorAll(selector)];
 
-function setMessage(message, success = false) {
-  authMessage.textContent = message;
-  authMessage.classList.toggle("success", success);
-}
-function showApp(show) {
-  document.body.classList.toggle("auth-locked", !show);
-  authScreen.style.display = show ? "none" : "grid";
-  shell.style.display = show ? "flex" : "none";
-}
-function toast(message) {
-  const node = document.querySelector("#toast");
-  node.textContent = message; node.classList.add("show");
-  window.clearTimeout(toast.timer); toast.timer = window.setTimeout(() => node.classList.remove("show"), 3500);
-}
+  const modal = $("#enquiryModal");
+  const toast = $("#toast");
 
-async function loadWorkspace(user) {
-  const { data: membership, error: memberError } = await supabase
-    .from("business_members").select("business_id, role").eq("user_id", user.id).limit(1).maybeSingle();
-  if (memberError) throw new Error("Could not load workspace membership: " + memberError.message);
-  if (!membership) throw new Error("This account is not linked to a UV Eventz workspace. Ask the workspace owner to check membership.");
-  const { data: business, error: businessError } = await supabase.from("businesses").select("id, name").eq("id", membership.business_id).single();
-  if (businessError) throw new Error("Could not load workspace: " + businessError.message);
-  activeBusinessId = business.id; activeUser = user;
-  $("#signedInName").textContent = user.email || "UV Eventz user";
-  $("#signedInRole").textContent = `${business.name} · ${membership.role}`;
-  $("#userAvatar").textContent = (user.email || "UV").slice(0, 2).toUpperCase();
-  const notice = $("#prototypeNotice");
-  if (notice) { notice.querySelector("strong").textContent = "Cloud workspace connected"; notice.querySelector("p").textContent = "Your session is active. New enquiries and customer details are saved to Supabase. Dashboard figures are still sample values."; }
-  showApp(true);
-}
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 
-authForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const button = authForm.querySelector("button[type=submit]"); button.disabled = true; button.textContent = "Signing in…";
-  setMessage("");
-  const form = new FormData(authForm);
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email: String(form.get("email")).trim(), password: String(form.get("password")) });
-    if (error) throw error;
-    await loadWorkspace(data.user);
-  } catch (error) { setMessage(error.message || "Sign-in failed. Check your email and password."); }
-  finally { button.disabled = false; button.textContent = "Sign in securely"; }
-});
+  function showToast(message) {
+    if (toast) {
+      toast.textContent = message;
+      toast.classList.add("show");
 
-$("#logoutButton").addEventListener("click", async () => {
-  const { error } = await supabase.auth.signOut();
-  activeBusinessId = null; activeUser = null; showApp(false);
-  if (error) setMessage("Signed out locally. " + error.message);
-});
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3200);
+    } else {
+      console.log(message);
+    }
+  }
 
-window.saveUvEnquiry = async (formData) => {
-  if (!activeBusinessId || !activeUser) throw new Error("Your session has expired. Please sign in again.");
-  const customerName = String(formData.get("customer") || "").trim();
-  const phone = String(formData.get("phone") || "").trim();
-  if (!customerName || !phone) throw new Error("Customer name and mobile number are required.");
-  const customerPayload = { business_id: activeBusinessId, full_name: customerName, phone, email: null, address: null, notes: String(formData.get("notes") || "").trim() || null };
-  const { data: customer, error: customerError } = await supabase.from("customers").insert(customerPayload).select("id").single();
-  if (customerError) throw new Error("Customer could not be saved: " + customerError.message);
-  const budgetValue = String(formData.get("budget") || "").trim();
-  const guestValue = String(formData.get("guestCount") || "").trim();
-  const enquiryPayload = {
-    business_id: activeBusinessId, customer_id: customer.id,
-    event_type: String(formData.get("eventType") || "Other family function"),
-    event_date: String(formData.get("eventDate") || "") || null,
-    venue: String(formData.get("venue") || "").trim() || null,
-    guest_count: guestValue ? Number(guestValue) : null,
-    budget: budgetValue ? Number(budgetValue) : null,
-    source: String(formData.get("source") || "Other"), status: "new",
-    notes: String(formData.get("notes") || "").trim() || null
+  // Dashboard date.
+  const todayLabel = $("#todayLabel");
+
+  if (todayLabel) {
+    todayLabel.textContent = new Intl.DateTimeFormat("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }).format(new Date());
+  }
+
+  const pageCopy = {
+    Dashboard: [
+      "Good morning, UV Eventz",
+      "Here’s what’s happening across your events today."
+    ],
+    Enquiries: [
+      "Enquiries",
+      "Capture leads, plan follow-ups and move opportunities forward."
+    ],
+    Customers: [
+      "Customers",
+      "Keep customer contact details and event history in one place."
+    ],
+    Quotations: [
+      "Quotations",
+      "Prepare, revise and track customer quotations."
+    ],
+    Events: [
+      "Events",
+      "Coordinate event dates, checklists, vendors and delivery."
+    ],
+    Invoices: [
+      "Invoices",
+      "Track invoices, customer receipts and outstanding balances."
+    ],
+    Finance: [
+      "Income & Expenses",
+      "Monitor receipts, vendor payments and event profitability."
+    ],
+    Reports: [
+      "Reports",
+      "Review business performance and event-wise results."
+    ],
+    Integrations: [
+      "Integrations",
+      "Configure email, WhatsApp Business and SMS connections."
+    ],
+    Settings: [
+      "Settings",
+      "Manage business profile, users, numbering and tax preferences."
+    ]
   };
-  const { error: enquiryError } = await supabase.from("enquiries").insert(enquiryPayload);
-  if (enquiryError) throw new Error("Customer saved, but enquiry failed: " + enquiryError.message + " — please tell us before retrying to avoid duplicate customers.");
-  toast(`Enquiry saved for ${customerName}.`);
-};
 
-async function restoreSession() {
-  showApp(false);
-  try {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (error) throw error;
-    if (session?.user) await loadWorkspace(session.user);
-  } catch (error) { setMessage("Connection issue: " + error.message); }
-}
-supabase.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_OUT") { activeBusinessId = null; activeUser = null; showApp(false); }
-});
-restoreSession();
+  function navigate(view) {
+    const copy = pageCopy[view] || pageCopy.Dashboard;
+
+    const pageName = $("#pageName");
+    const pageTitle = $("#pageTitle");
+    const pageSubtitle = $("#pageSubtitle");
+
+    if (pageName) pageName.textContent = view;
+    if (pageTitle) pageTitle.textContent = copy[0];
+    if (pageSubtitle) pageSubtitle.textContent = copy[1];
+
+    $$(".nav-item[data-view]").forEach(button => {
+      const active = button.dataset.view === view;
+
+      button.classList.toggle("active", active);
+
+      if (active) {
+        button.setAttribute("aria-current", "page");
+      } else {
+        button.removeAttribute("aria-current");
+      }
+    });
+
+    if (view !== "Dashboard") {
+      showToast(
+        view === "Enquiries"
+          ? "Enquiry workspace selected."
+          : `${view} will be connected in a later milestone.`
+      );
+    }
+
+    setDrawerOpen(false);
+  }
+
+  $$(".nav-item[data-view]").forEach(button => {
+    button.addEventListener("click", () => {
+      navigate(button.dataset.view);
+    });
+  });
+
+  $$("[data-view-link]").forEach(button => {
+    button.addEventListener("click", () => {
+      navigate(button.dataset.viewLink);
+    });
+  });
+
+  // Enquiry modal controls.
+  const newEnquiryButton = $("#newEnquiryButton");
+  const cancelEnquiryButton = $("#cancelEnquiry");
+
+  if (newEnquiryButton && modal) {
+    newEnquiryButton.addEventListener("click", () => {
+      modal.showModal();
+    });
+  }
+
+  if (cancelEnquiryButton && modal) {
+    cancelEnquiryButton.addEventListener("click", () => {
+      modal.close();
+    });
+  }
+
+  $("#dismissNotice")?.addEventListener("click", () => {
+    $("#prototypeNotice")?.remove();
+  });
+
+  // Mobile drawer.
+  const sidebar = $("#sidebar");
+  const drawerBackdrop = $("#drawerBackdrop");
+  const mobileMenu = $("#mobileMenu");
+
+  function setDrawerOpen(open) {
+    sidebar?.classList.toggle("open", open);
+    drawerBackdrop?.classList.toggle("visible", open);
+
+    if (mobileMenu) {
+      mobileMenu.setAttribute("aria-expanded", String(open));
+    }
+
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+
+  if (mobileMenu) {
+    mobileMenu.setAttribute("aria-expanded", "false");
+
+    mobileMenu.addEventListener("click", () => {
+      setDrawerOpen(!sidebar?.classList.contains("open"));
+    });
+  }
+
+  drawerBackdrop?.addEventListener("click", () => {
+    setDrawerOpen(false);
+  });
+
+  window.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      setDrawerOpen(false);
+    }
+  });
+
+  $("#helpButton")?.addEventListener("click", () => {
+    showToast("Help centre will be added in a later phase.");
+  });
+
+  $("#periodButton")?.addEventListener("click", () => {
+    showToast("Date filters will be connected to live reports in a later phase.");
+  });
+
+  $("#exportButton")?.addEventListener("click", () => {
+    window.print();
+  });
+
+  // Enquiry submission.
+  const enquiryForm = $("#enquiryForm");
+
+  if (!enquiryForm) {
+    console.error("UV Eventz: enquiry form was not found.");
+  } else {
+    enquiryForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      // Capture these references before any asynchronous operation.
+      const form = event.currentTarget;
+      const button = $("#saveEnquiryButton");
+
+      if (!(form instanceof HTMLFormElement)) {
+        showToast("The enquiry form could not be identified. Please refresh.");
+        return;
+      }
+
+      if (typeof window.saveUvEnquiry !== "function") {
+        showToast(
+          "Secure connection is not ready. Refresh the page and sign in again."
+        );
+        return;
+      }
+
+      if (!button) {
+        showToast("Save button not found. Please refresh the page.");
+        return;
+      }
+
+      // Preserve the values before starting the save.
+      const formData = new FormData(form);
+
+      button.disabled = true;
+      button.textContent = "Saving…";
+
+      try {
+        // The existing helper handles the actual Supabase save.
+        await window.saveUvEnquiry(formData);
+
+        // Reset only the captured form, and only after success.
+        if (form.isConnected) {
+          HTMLFormElement.prototype.reset.call(form);
+        }
+
+        if (modal?.open) {
+          modal.close();
+        }
+
+        showToast("Enquiry saved successfully.");
+
+        window.dispatchEvent(
+          new CustomEvent("uv-eventz:enquiry-saved")
+        );
+      } catch (error) {
+        console.error("UV Eventz enquiry save failed:", error);
+
+        showToast(
+          error?.message ||
+          "The enquiry could not be confirmed as saved. Please check Supabase."
+        );
+      } finally {
+        if (button.isConnected) {
+          button.disabled = false;
+          button.textContent = "Save enquiry";
+        }
+      }
+    });
+  }
+
+  // Business data is stored in Supabase, not browser localStorage.
+})();
